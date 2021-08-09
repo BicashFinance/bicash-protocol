@@ -1,6 +1,6 @@
-# One Cash
+# Bi Cash
 
-Okay Cash Protocol
+Bi Cash Protocol
 
 ## Contract Addresses
 
