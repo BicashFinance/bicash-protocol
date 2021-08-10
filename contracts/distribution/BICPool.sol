@@ -10,7 +10,7 @@ pragma solidity ^0.6.0;
 /___/ \_, //_//_/\__//_//_/\__/ \__//_/ /_\_\
      /___/
 
-* Synthetix: okayCashRewards.sol
+* Synthetix: cashRewards.sol
 *
 * Docs: https://docs.synthetix.io/
 *
@@ -93,8 +93,8 @@ contract TokenWrapper {
 }
 
 contract BICPool is TokenWrapper, IRewardDistributionRecipient {
-    IERC20 public okayCash;
-    uint256 public DURATION = 3 days;
+    IERC20 public cash;
+    uint256 public DURATION = 5 days;
     uint256 public depositLimit;
 
     uint256 public starttime;
@@ -111,8 +111,8 @@ contract BICPool is TokenWrapper, IRewardDistributionRecipient {
     event Withdrawn(address indexed user, uint256 amount);
     event RewardPaid(address indexed user, uint256 reward);
 
-    constructor(address okayCash_, address dai_, uint256 _starttime, uint256 _depositLimit) public {
-        okayCash = IERC20(okayCash_);
+    constructor(address cash_, address dai_, uint256 _starttime, uint256 _depositLimit) public {
+        cash = IERC20(cash_);
         dai = IERC20(dai_);
         starttime = _starttime;
         depositLimit = _depositLimit;
@@ -192,7 +192,7 @@ contract BICPool is TokenWrapper, IRewardDistributionRecipient {
         uint256 reward = earned(msg.sender);
         if (reward > 0) {
             rewards[msg.sender] = 0;
-            okayCash.safeTransfer(msg.sender, reward);
+            cash.safeTransfer(msg.sender, reward);
             emit RewardPaid(msg.sender, reward);
         }
     }
