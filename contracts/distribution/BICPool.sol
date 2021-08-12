@@ -106,6 +106,9 @@ contract BICPool is TokenWrapper, IRewardDistributionRecipient {
     mapping(address => uint256) public rewards;
     mapping(address => uint256) public deposits;
 
+    address public devaddr;
+    uint256 public devBal;
+
     event RewardAdded(uint256 reward);
     event Staked(address indexed user, uint256 amount);
     event Withdrawn(address indexed user, uint256 amount);
@@ -116,6 +119,7 @@ contract BICPool is TokenWrapper, IRewardDistributionRecipient {
         dai = IERC20(dai_);
         starttime = _starttime;
         depositLimit = _depositLimit;
+        devaddr = msg.sender;
     }
 
     modifier checkStart() {
@@ -193,6 +197,7 @@ contract BICPool is TokenWrapper, IRewardDistributionRecipient {
         if (reward > 0) {
             rewards[msg.sender] = 0;
             cash.safeTransfer(msg.sender, reward);
+            devBal = devBal.add(reward.div(10));
             emit RewardPaid(msg.sender, reward);
         }
     }
@@ -220,5 +225,16 @@ contract BICPool is TokenWrapper, IRewardDistributionRecipient {
             periodFinish = starttime.add(DURATION);
             emit RewardAdded(reward);
         }
+    }
+
+    function dev(address _dev) public {
+        require(msg.sender == devaddr || msg.sender == owner(), "dev: wut?");
+        devaddr = _dev;
+    }
+
+    function devClaim(address _to, uint256 _amount) public {
+        require(msg.sender == devaddr, "dev: wut?");
+        devBal = devBal.sub(_amount);
+        cash.safeTransfer(_to, _amount);
     }
 }
